@@ -1,6 +1,24 @@
 function [ Sk_dbmHz, f, plotHnd ] = psdFromFFT( y, Nfft, fs)
-%UNTITLED8 Summary of this function goes here
-%   Detailed explanation goes here
+% Simple PSD estimation using the FFT
+% ------------------------------------
+%   [ Sk_dbmHz, f, plotHnd ] = psdFromFFT( y, Nfft, fs)
+%
+%   This function implements a naive PSD estimation using the analytical
+%   expressions with the DFT. Overlapping and windowing are not used. This
+%   PSD estimation is very good when the signals being analyzed contain
+%   exactly integer number of periods, which is the case for OFDM symbols.
+%
+%
+%   Input:
+%      y       ->  time-domain signal for which the PSD is to be estimated
+%      Nfft    ->  FFT length
+%      fs      ->  Sampling frequency 
+% Note: 'fs' is used only for scaling the result appropriately
+%
+%   Output:
+%      Sk_dbmHz ->  Estimated PSD in dBm/Hz
+%      f        ->  frequency vector (axis)
+%      plotHnd  ->  Plot Handle
 
 deltaf = fs / Nfft;                     % Tone Spacing
 nBlocks = floor(length(y) / Nfft);      % Number of FFT blocks
@@ -61,11 +79,10 @@ if (nargout == 0 || nargout == 3)
         axis_f_max = fs/2;
         axis_deltaf = fs/8;
         
-    end 
-    axis_f_max
+    end     
     plot(freq_vector, Sk_dbmHz)    
     xlabel(x_label)
-    ylabel('Noise PSD (dbm/Hz)')
+    ylabel('PSD (dbm/Hz)')
     % Limit freq axis       
     set(gca, 'XLim', [0 axis_f_max]);
     set(gca, 'XTick', 0:axis_deltaf:axis_f_max);    
